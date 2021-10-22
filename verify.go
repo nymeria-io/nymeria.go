@@ -2,16 +2,9 @@ package nymeria
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/url"
-)
-
-var (
-	// ErrInvalidRequest is returned any time a request looks malformed or inavlid.
-	// This can be due to a bad parameter, or bad encoding.
-	ErrInvalidRequest = errors.New(`error: the request looks invalid or malformed`)
 )
 
 // Verification is the result of an email verify request. The "result" can either be
@@ -39,7 +32,7 @@ type Verification struct {
 
 // Verify takes a professional email address and tries to verify its validity.
 func Verify(email string) (*Verification, error) {
-	req, err := request("GET", fmt.Sprintf("/verify?email=%s", url.QueryEscape(email)))
+	req, err := request("GET", fmt.Sprintf("/verify?email=%s", url.QueryEscape(email)), nil)
 
 	if err != nil {
 		return nil, err

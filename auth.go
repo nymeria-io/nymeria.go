@@ -2,18 +2,11 @@ package nymeria
 
 import (
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"strings"
 )
 
 var apiKey string
-
-var (
-	// ErrInvalidAuthKey is returned any time an invalid or malformed API auth
-	// key is detected.
-	ErrInvalidAuthKey = errors.New(`error: the supplied auth key is invalid`)
-)
 
 // SetAuth will set the libraries authentication key. Only a single API key
 // can be used and will be added to all API requests automatically.
@@ -32,7 +25,7 @@ func SetAuth(s string) error {
 // CheckAuthentication will send the apiKey to the Nymeria server, and check
 // if the API key is valid. If it's invalid, an error is returned.
 func CheckAuthentication() error {
-	req, err := request("GET", "/check-authentication")
+	req, err := request("GET", "/check-authentication", nil)
 
 	if err != nil {
 		return err

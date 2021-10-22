@@ -53,7 +53,7 @@ type Enrichment struct {
 
 // Enrich takes a url as a first parameter.
 func Enrich(u string) (*Enrichment, error) {
-	req, err := request("GET", fmt.Sprintf("/enrich?url=%s", url.QueryEscape(u)))
+	req, err := request("GET", fmt.Sprintf("/enrich?url=%s", url.QueryEscape(u)), nil)
 
 	if err != nil {
 		return nil, err

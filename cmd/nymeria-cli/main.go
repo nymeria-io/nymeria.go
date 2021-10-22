@@ -8,10 +8,12 @@ import (
 	"log"
 	"nymeria"
 	"os"
+	"strings"
 )
 
 var (
 	auth                string
+	bulkenrich          string
 	checkAuthentication bool
 	enrich              string
 	help                bool
@@ -66,6 +68,7 @@ func main() {
 	flag.StringVar(&auth, "auth", "", "Set's the tool's auth key. This will be be cached for future uses.")
 	flag.StringVar(&verify, "verify", "", "If an email is specified, will try to discover the deliverability of the email using Nymeria's API.")
 	flag.StringVar(&enrich, "enrich", "", "If a URL is specified, will try to find the person in Nymeria's API and display them.")
+	flag.StringVar(&bulkenrich, "bulkenrich", "", "If specified, will send all urls for enrichment.")
 
 	flag.Parse()
 
@@ -112,6 +115,19 @@ func main() {
 
 	if len(enrich) > 0 {
 		v, err := nymeria.Enrich(enrich)
+
+		if err != nil {
+			fmt.Printf("Looks like an error occurred (%s).\n", err)
+			return
+		}
+
+		prettyPrint(v)
+
+		return
+	}
+
+	if len(bulkenrich) > 0 {
+		v, err := nymeria.BulkEnrich(strings.Split(bulkenrich, ",")...)
 
 		if err != nil {
 			fmt.Printf("Looks like an error occurred (%s).\n", err)
