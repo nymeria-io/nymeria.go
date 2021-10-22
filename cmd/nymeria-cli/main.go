@@ -69,9 +69,6 @@ func main() {
 	if len(auth) > 0 {
 		cacheAuthKey(auth)
 
-		if err := nymeria.SetAuth(auth); err != nil {
-			log.Fatal(err)
-		}
 	} else {
 		auth = tryAuthFromCache()
 	}
@@ -79,5 +76,12 @@ func main() {
 	if len(auth) == 0 {
 		fmt.Println("error: no auth key found")
 		flag.Usage()
+		return
+	}
+
+	/* we have an api key, we can begin doing real work */
+
+	if err := nymeria.SetAuth(auth); err != nil {
+		log.Fatal(err)
 	}
 }
