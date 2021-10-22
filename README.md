@@ -3,6 +3,51 @@
 The official Golang package and command line tool to interact with the Nymeria
 service.
 
+## API
+
+## Set and Check an API Key.
+
+```go
+nymeria.SetAuth("ny_your-api-key")
+
+if err := nymeria.CheckAuthentication(); err == nil {
+  log.Println("OK!")
+}
+```
+
+All API endpoints assume an auth key has been set. You should set the auth key
+early in your program. The key will automatically be added to all future
+requests.
+
+## Verify an Email Address
+
+```go
+if v, err := nymeria.Verify("someone@somewhere.com"); err == nil && v.Data.Result == "valid" {
+  log.Println("OK!")
+}
+```
+
+At this time only professional email addresses are supported by the API.
+
+## Enrich a Profile
+
+```go
+if v, err := nymeria.Enrich("github.com/someone"); err == nil && v.Status == "success" {
+  log.Println(v.Data.Emails)
+}
+```
+
+The enrich API works on a profile by profile basis. If you need to enrich
+multiple profiles at once you can use the bulk enrichment API.
+
+## Bulk Enrichment of Profiles
+
+```go
+if v, err := nymeria.BulkEnrich("github.com/someone", "linkedin.com/in/someoneelse"); err == nil && v.Status == "success" {
+  log.Println(v.Data)
+}
+```
+
 ## License
 
 MIT License
