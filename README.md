@@ -68,10 +68,10 @@ The command line tool enables you to quickly test the Nymeria API.
 
 #### Installation
 
-You can install the command line tool with `go get`.
+You can install the command line tool with `go install`.
 
 ```bash
-$ go install github.com/nymeriaio/nymeria.go/cmd/nymeria-cli@latest
+$ go install github.com/nymeriaio/nymeria.go/cmd/nymeria-cli@v1.0.3
 ```
 
 #### Set an API Key
