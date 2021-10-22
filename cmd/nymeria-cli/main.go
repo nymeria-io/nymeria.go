@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -12,10 +13,17 @@ import (
 var (
 	auth                string
 	checkAuthentication bool
+	enrich              string
 	help                bool
 	purge               bool
 	verify              string
 )
+
+func prettyPrint(i interface{}) {
+	if bs, err := json.MarshalIndent(i, "", "  "); err == nil {
+		fmt.Println(string(bs))
+	}
+}
 
 func getCacheDir() string {
 	if dir := os.Getenv("NYMERIA_CACHE_DIR"); dir != "" {
@@ -57,6 +65,7 @@ func main() {
 	flag.BoolVar(&checkAuthentication, "check-auth", false, "If set, will test the supplied or cached api key and determine if it's valid or not.")
 	flag.StringVar(&auth, "auth", "", "Set's the tool's auth key. This will be be cached for future uses.")
 	flag.StringVar(&verify, "verify", "", "If an email is specified, will try to discover the deliverability of the email using Nymeria's API.")
+	flag.StringVar(&enrich, "enrich", "", "If a URL is specified, will try to find the person in Nymeria's API and display them.")
 
 	flag.Parse()
 
@@ -96,7 +105,20 @@ func main() {
 			return
 		}
 
-		fmt.Printf("%#v\n", v)
+		prettyPrint(v)
+
+		return
+	}
+
+	if len(enrich) > 0 {
+		v, err := nymeria.Enrich(enrich)
+
+		if err != nil {
+			fmt.Printf("Looks like an error occurred (%s).\n", err)
+			return
+		}
+
+		prettyPrint(v)
 
 		return
 	}
