@@ -5,7 +5,7 @@ service.
 
 ## API
 
-## Set and Check an API Key.
+### Set and Check an API Key.
 
 ```go
 nymeria.SetAuth("ny_your-api-key")
@@ -19,32 +19,44 @@ All API endpoints assume an auth key has been set. You should set the auth key
 early in your program. The key will automatically be added to all future
 requests.
 
-## Verify an Email Address
+### Verify an Email Address
 
 ```go
-if v, err := nymeria.Verify("someone@somewhere.com"); err == nil && v.Data.Result == "valid" {
-  log.Println("OK!")
+if v, err := nymeria.Verify("someone@somewhere.com"); err == nil {
+  log.Println(v.Data.Result)
 }
 ```
 
 At this time only professional email addresses are supported by the API.
 
-## Enrich a Profile
+### Enrich a Profile
 
 ```go
-if v, err := nymeria.Enrich("github.com/someone"); err == nil && v.Status == "success" {
-  log.Println(v.Data.Emails)
+if v, err := nymeria.Enrich("github.com/someone"); err == nil {
+  if v.Status == "success" {
+    log.Println(v.Data.Emails)
+  }
 }
 ```
 
 The enrich API works on a profile by profile basis. If you need to enrich
 multiple profiles at once you can use the bulk enrichment API.
 
-## Bulk Enrichment of Profiles
+### Bulk Enrichment of Profiles
 
 ```go
-if v, err := nymeria.BulkEnrich("github.com/someone", "linkedin.com/in/someoneelse"); err == nil && v.Status == "success" {
-  log.Println(v.Data)
+// Up to 100 URLs will be enriched at a time.
+urls := []string{
+  "github.com/someone",
+  "linkedin.com/in/someoneelse",
+}
+
+if v, err := nymeria.BulkEnrich(urls...); err == nil {
+  if v.Status == "success" {
+    for _, match := range v.Data {
+      log.Println(match.Result.Emails)
+    }
+  }
 }
 ```
 
