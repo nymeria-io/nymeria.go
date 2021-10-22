@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	auth  string
-	help  bool
-	purge bool
+	auth                string
+	checkAuthentication bool
+	help                bool
+	purge               bool
 )
 
 func getCacheDir() string {
@@ -52,6 +53,7 @@ func tryAuthFromCache() string {
 func main() {
 	flag.BoolVar(&help, "help", false, "Displays the tool's usage.")
 	flag.BoolVar(&purge, "purge", false, "Purge all of the tool's cached data.")
+	flag.BoolVar(&checkAuthentication, "check-auth", false, "If set, will test the supplied or cached api key and determine if it's valid or not.")
 	flag.StringVar(&auth, "auth", "", "Set's the tool's auth key. This will be be cached for future uses.")
 
 	flag.Parse()
@@ -68,7 +70,6 @@ func main() {
 
 	if len(auth) > 0 {
 		cacheAuthKey(auth)
-
 	} else {
 		auth = tryAuthFromCache()
 	}
@@ -83,5 +84,16 @@ func main() {
 
 	if err := nymeria.SetAuth(auth); err != nil {
 		log.Fatal(err)
+	}
+
+	if checkAuthentication {
+		if err := nymeria.CheckAuthentication(); err != nil {
+			fmt.Printf("Looks like the supplied key is not valid (%s).\n", err)
+			return
+		}
+
+		fmt.Println("The API key Looks good. You are ready to go!")
+
+		return
 	}
 }
