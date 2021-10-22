@@ -150,4 +150,6 @@ func main() {
 
 		return
 	}
+
+	flag.Usage()
 }
