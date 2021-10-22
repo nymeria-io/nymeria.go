@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"nymeria"
 	"os"
 	"strings"
+
+	"github.com/nymeriaio/nymeria.go"
 )
 
 var (
