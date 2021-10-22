@@ -14,6 +14,7 @@ var (
 	checkAuthentication bool
 	help                bool
 	purge               bool
+	verify              string
 )
 
 func getCacheDir() string {
@@ -55,6 +56,7 @@ func main() {
 	flag.BoolVar(&purge, "purge", false, "Purge all of the tool's cached data.")
 	flag.BoolVar(&checkAuthentication, "check-auth", false, "If set, will test the supplied or cached api key and determine if it's valid or not.")
 	flag.StringVar(&auth, "auth", "", "Set's the tool's auth key. This will be be cached for future uses.")
+	flag.StringVar(&verify, "verify", "", "If an email is specified, will try to discover the deliverability of the email using Nymeria's API.")
 
 	flag.Parse()
 
@@ -84,6 +86,19 @@ func main() {
 
 	if err := nymeria.SetAuth(auth); err != nil {
 		log.Fatal(err)
+	}
+
+	if len(verify) > 0 {
+		v, err := nymeria.Verify(verify)
+
+		if err != nil {
+			fmt.Printf("Looks like an error occurred (%s).\n", err)
+			return
+		}
+
+		fmt.Printf("%#v\n", v)
+
+		return
 	}
 
 	if checkAuthentication {
