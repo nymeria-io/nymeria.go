@@ -21,7 +21,7 @@ if err := nymeria.CheckAuthentication(); err == nil {
 }
 ```
 
-All API endpoints assume an auth key has been set. You should set the auth key
+All API endpoints assume an api key has been set. You should set the api key
 early in your program. The key will automatically be added to all future
 requests.
 
@@ -32,8 +32,6 @@ if v, err := nymeria.Verify("someone@somewhere.com"); err == nil {
   log.Println(v.Data.Result)
 }
 ```
-
-At this time only professional email addresses are supported by the API.
 
 #### Enrich a Profile
 
