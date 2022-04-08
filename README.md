@@ -1,9 +1,13 @@
 # Nymeria
 
-The official Golang package and command line tool to interact with the Nymeria
-service.
+The official golang package and command line tool to interact with the Nymeria service
+and API.
 
-![Nymeria makes finding contact details a breeze.](https://www.nymeria.io/marquee.png)
+Nymeria makes it easy to enrich data with contact information such as email
+addresses, phone numbers and social links. The golang package wraps Nymeria's [public
+API](https://www.nymeria.io/developers) so you don't have to.
+
+![Nymeria makes finding contact details a breeze.](https://www.nymeria.io/assets/images/marquee.png)
 
 ## API
 
@@ -118,7 +122,7 @@ $ nymeria-cli --bulkenrich github.com/someone,linkedin.com/in/someoneelse
 
 MIT License
 
-Copyright (c) 2021, Nymeria LLC.
+Copyright (c) 2022, Nymeria LLC.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
