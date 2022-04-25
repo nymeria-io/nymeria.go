@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nymeriaio/nymeria.go"
+	"git.nymeria.io/nymeria.go"
 )
 
 var (
