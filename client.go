@@ -6,7 +6,14 @@ import (
 	"net/http"
 )
 
+const (
+	apiVersion = "3"
+	baseURL    = "https://www.nymeria.io/api/v" + apiVersion
+	userAgent  = "nymeria.go/" + apiVersion
+)
+
 var (
+	// TODO: Specify timeouts.
 	client = http.Client{}
 )
 
