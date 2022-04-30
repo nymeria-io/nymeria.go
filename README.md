@@ -1,5 +1,7 @@
 # Nymeria
 
+[![Go Reference](https://pkg.go.dev/badge/git.nymeria.io/nymeria.go.svg)](https://pkg.go.dev/git.nymeria.io/nymeria.go)
+
 The official golang package and command line tool to interact with the Nymeria service
 and API.
 
