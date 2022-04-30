@@ -12,13 +12,11 @@ import (
 )
 
 var (
-	auth                string
-	bulkenrich          string
-	checkAuthentication bool
-	enrich              string
-	help                bool
-	purge               bool
-	verify              string
+	auth   string
+	enrich string
+	help   bool
+	purge  bool
+	verify string
 )
 
 func prettyPrint(i interface{}) {
@@ -64,7 +62,6 @@ func tryAuthFromCache() string {
 func main() {
 	flag.BoolVar(&help, "help", false, "Displays the tool's usage.")
 	flag.BoolVar(&purge, "purge", false, "Purge all of the tool's cached data.")
-	flag.BoolVar(&checkAuthentication, "check-auth", false, "If set, will test the supplied or cached api key and determine if it's valid or not.")
 	flag.StringVar(&auth, "auth", "", "Set's the tool's auth key. This will be be cached for future uses.")
 	flag.StringVar(&verify, "verify", "", "If an email is specified, will try to discover the deliverability of the email using Nymeria's API.")
 	flag.StringVar(&enrich, "enrich", "", "A JSON encoded set of enrichment params (ex: '[{'url': 'github.com/nymeriaio'}]')")
@@ -81,22 +78,41 @@ func main() {
 		return
 	}
 
+	// -auth (set an auth key and verify it)
+
 	if len(auth) > 0 {
 		cacheAuthKey(auth)
-	} else {
-		auth = tryAuthFromCache()
-	}
 
-	if len(auth) == 0 {
-		fmt.Println("error: no auth key found")
+		if err := nymeria.SetAuth(auth); err != nil {
+			log.Fatal(err)
+		}
+
+		if err := nymeria.CheckAuthentication(); err != nil {
+			fmt.Printf("Looks like the supplied key is not valid (%s).\n", err)
+			return
+		}
+
+		fmt.Println("The API key Looks good. You are ready to go! You can now use the -verify and -enrich options.")
+
 		return
 	}
 
-	/* we have an api key, we can begin doing real work */
+	// all methods below require an auth key
+
+	if len(auth) == 0 {
+		auth = tryAuthFromCache()
+
+		if len(auth) == 0 {
+			fmt.Println("error: no auth key found, cache a key via -auth string")
+			return
+		}
+	}
 
 	if err := nymeria.SetAuth(auth); err != nil {
 		log.Fatal(err)
 	}
+
+	// -verify string
 
 	if len(verify) > 0 {
 		v, err := nymeria.Verify(verify)
@@ -110,6 +126,8 @@ func main() {
 
 		return
 	}
+
+	// -enrich string
 
 	if len(enrich) > 0 {
 		var params []nymeria.EnrichParams
@@ -133,16 +151,7 @@ func main() {
 		return
 	}
 
-	if checkAuthentication {
-		if err := nymeria.CheckAuthentication(); err != nil {
-			fmt.Printf("Looks like the supplied key is not valid (%s).\n", err)
-			return
-		}
-
-		fmt.Println("The API key Looks good. You are ready to go!")
-
-		return
-	}
+	// default
 
 	flag.Usage()
 }
