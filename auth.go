@@ -2,11 +2,19 @@ package nymeria
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"strings"
 )
 
-var apiKey string
+var (
+	// ErrInvalidAuthKey is returned any time an invalid or malformed API auth
+	// key is detected.
+	ErrInvalidAuthKey = errors.New(`error: the supplied auth key is invalid`)
+
+	// The API key that will be used for all authenticated requests.
+	apiKey string
+)
 
 // SetAuth will set the libraries authentication key. Only a single API key
 // can be used and will be added to all API requests automatically.
