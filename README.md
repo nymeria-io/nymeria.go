@@ -73,13 +73,13 @@ The command line tool enables you to quickly test the Nymeria API.
 You can install the command line tool with `go install`.
 
 ```bash
-$ go install git.nymeria.io/nymeria.go/cmd/nymeria-cli@v1.0.5
+$ go install git.nymeria.io/nymeria.go/cmd/nymeria@v1.0.5
 ```
 
 #### Set an API Key
 
 ```bash
-$ nymeria-cli --auth ny_abc-123-456
+$ nymeria --auth ny_abc-123-456
 ```
 
 The API key will be cached for future commands.
@@ -87,7 +87,7 @@ The API key will be cached for future commands.
 #### Purge all cached data.
 
 ```bash
-$ nymeria-cli --purge
+$ nymeria --purge
 ```
 
 #### Check Authentication
@@ -95,25 +95,25 @@ $ nymeria-cli --purge
 To quickly check your auth key you can run the following:
 
 ```bash
-$ nymeria-cli --check-auth
+$ nymeria --check-auth
 ```
 
 #### Verify an Email Address
 
 ```bash
-$ nymeria-cli --verify someone@somewhere.com
+$ nymeria --verify someone@somewhere.com
 ```
 
 #### Enrich a Profile
 
 ```bash
-$ nymeria-cli --enrich github.com/someone
+$ nymeria --enrich github.com/someone
 ```
 
 #### Bulk Enrich Profiles
 
 ```bash
-$ nymeria-cli --bulkenrich github.com/someone,linkedin.com/in/someoneelse
+$ nymeria --bulkenrich github.com/someone,linkedin.com/in/someoneelse
 ```
 
 ## License
