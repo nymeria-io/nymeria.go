@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 const (
@@ -13,8 +14,12 @@ const (
 )
 
 var (
-	// TODO: Specify timeouts.
-	client = http.Client{}
+	// Timeout is the default timeout used by the HTTP client (default: 5 seconds).
+	Timeout = 5 * time.Second
+
+	client = http.Client{
+		Timeout: Timeout,
+	}
 )
 
 func request(method, endpoint string, data io.Reader) (*http.Request, error) {

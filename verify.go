@@ -7,6 +7,7 @@ import (
 	"net/url"
 )
 
+//
 // Verification is the result of an email verify request. The "result" can either be
 // valid or invalid. The tags can include things like:
 //
