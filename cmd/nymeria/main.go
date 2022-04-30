@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 
 	"git.nymeria.io/nymeria.go"
 )
@@ -68,8 +67,7 @@ func main() {
 	flag.BoolVar(&checkAuthentication, "check-auth", false, "If set, will test the supplied or cached api key and determine if it's valid or not.")
 	flag.StringVar(&auth, "auth", "", "Set's the tool's auth key. This will be be cached for future uses.")
 	flag.StringVar(&verify, "verify", "", "If an email is specified, will try to discover the deliverability of the email using Nymeria's API.")
-	flag.StringVar(&enrich, "enrich", "", "If a URL is specified, will try to find the person in Nymeria's API and display them.")
-	flag.StringVar(&bulkenrich, "bulkenrich", "", "If specified, will send all urls for enrichment.")
+	flag.StringVar(&enrich, "enrich", "", "A JSON encoded set of enrichment params (ex: '[{'url': 'github.com/nymeriaio'}]')")
 
 	flag.Parse()
 
@@ -91,7 +89,6 @@ func main() {
 
 	if len(auth) == 0 {
 		fmt.Println("error: no auth key found")
-		flag.Usage()
 		return
 	}
 
@@ -115,20 +112,16 @@ func main() {
 	}
 
 	if len(enrich) > 0 {
-		v, err := nymeria.Enrich(enrich)
+		var params []nymeria.EnrichParams
+
+		err := json.Unmarshal([]byte(enrich), &params)
 
 		if err != nil {
 			fmt.Printf("Looks like an error occurred (%s).\n", err)
 			return
 		}
 
-		prettyPrint(v)
-
-		return
-	}
-
-	if len(bulkenrich) > 0 {
-		v, err := nymeria.BulkEnrich(strings.Split(bulkenrich, ",")...)
+		v, err := nymeria.Enrich(params...)
 
 		if err != nil {
 			fmt.Printf("Looks like an error occurred (%s).\n", err)
