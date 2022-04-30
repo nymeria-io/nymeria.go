@@ -11,7 +11,7 @@ API](https://www.nymeria.io/developers) so you don't have to.
 
 ![Nymeria makes finding contact details a breeze.](https://www.nymeria.io/assets/images/marquee.png)
 
-## API
+## Go API
 
 #### Set and Check an API Key.
 
@@ -35,32 +35,31 @@ if v, err := nymeria.Verify("someone@somewhere.com"); err == nil {
 }
 ```
 
-#### Enrich a Profile
+#### Enrich Profiles
+
+You can enrich one or more profiles using the Enrich method. The Enrich
+method takes one or more enrich params and returns one or more enrichment
+records.
 
 ```go
-if v, err := nymeria.Enrich("github.com/someone"); err == nil {
-  if v.Status == "success" {
-    log.Println(v.Data.Emails)
-  }
-}
-```
-
-The enrich API works on a profile by profile basis. If you need to enrich
-multiple profiles at once you can use the bulk enrichment API.
-
-#### Bulk Enrichment of Profiles
-
-```go
-// Up to 100 URLs will be enriched at a time.
-urls := []string{
-  "github.com/someone",
-  "linkedin.com/in/someoneelse",
+params := []nymeria.EnrichParams{
+  {
+    URL: "github.com/nymeriaio",
+  },
+  {
+    Email: "steve@woz.org",
+  },
 }
 
-if v, err := nymeria.BulkEnrich(urls...); err == nil {
-  if v.Status == "success" {
-    for _, match := range v.Data {
-      log.Println(match.Result.Emails)
+if es, err := nymeria.Enrich(params...); err == nil {
+  for _, enrichment := range es {
+    if enrichment.Status == "success" {
+      log.Println(enrichment.Meta)               /* input params, etc */
+
+      log.Println(enrichment.Data.Bio)
+      log.Println(enrichment.Data.Emails)
+      log.Println(enrichment.Data.PhoneNumbers)
+      log.Println(enrichment.Data.Social)
     }
   }
 }
@@ -75,7 +74,7 @@ The command line tool enables you to quickly test the Nymeria API.
 You can install the command line tool with `go install`.
 
 ```bash
-$ go install git.nymeria.io/nymeria.go/cmd/nymeria@v1.0.5
+$ go install git.nymeria.io/nymeria.go/cmd/nymeria@v2.0.0
 ```
 
 #### Set an API Key
@@ -92,30 +91,16 @@ The API key will be cached for future commands.
 $ nymeria --purge
 ```
 
-#### Check Authentication
-
-To quickly check your auth key you can run the following:
-
-```bash
-$ nymeria --check-auth
-```
-
 #### Verify an Email Address
 
 ```bash
 $ nymeria --verify someone@somewhere.com
 ```
 
-#### Enrich a Profile
+#### Enrich Profiles
 
 ```bash
-$ nymeria --enrich github.com/someone
-```
-
-#### Bulk Enrich Profiles
-
-```bash
-$ nymeria --bulkenrich github.com/someone,linkedin.com/in/someoneelse
+$ nymeria --enrich '[{ "url": "github.com/nymeriaio" }, { "email": "steve@woz.org" }]'
 ```
 
 ## License
