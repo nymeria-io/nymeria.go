@@ -30,6 +30,8 @@ requests.
 #### Verify an Email Address
 
 ```go
+nymeria.SetAuth("ny_your-api-key")
+
 if v, err := nymeria.Verify("someone@somewhere.com"); err == nil {
   log.Println(v.Data.Result)
 }
@@ -42,6 +44,8 @@ method takes one or more enrich params and returns one or more enrichment
 records.
 
 ```go
+nymeria.SetAuth("ny_your-api-key")
+
 params := []nymeria.EnrichParams{
   {
     URL: "github.com/nymeriaio",
