@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/url"
+	"strings"
 )
 
 var (
@@ -93,6 +94,130 @@ type Verification struct {
 		Result string   `json:"result"`
 		Tags   []string `json:"tags"`
 	} `json:"data"`
+}
+
+// PeopleQuery is the query parameters for the people search API.
+type PeopleQuery struct {
+	Start    int      `json:"start,omitempty"`
+	Q        string   `json:"q,omitempty"`
+	Location string   `json:"location,omitempty"`
+	Country  string   `json:"country,omitempty"`
+	Title    string   `json:"title,omitempty"`
+	Company  string   `json:"company,omitempty"`
+	Skills   []string `json:"skills,omitempty"`
+	HasEmail bool     `json:"has_email,omitempty"`
+	HasPhone bool     `json:"has_phone,omitempty"`
+}
+
+// Params will convert the query into a query string.
+func (p PeopleQuery) Params() string {
+	var sb strings.Builder
+
+	if len(p.Q) > 0 {
+		sb.WriteString(fmt.Sprintf(`&q=%s`, url.QueryEscape(p.Q)))
+	}
+
+	if len(p.Location) > 0 {
+		sb.WriteString(fmt.Sprintf(`&location=%s`, url.QueryEscape(p.Location)))
+	}
+
+	if len(p.Country) > 0 {
+		sb.WriteString(fmt.Sprintf(`&country=%s`, url.QueryEscape(p.Country)))
+	}
+
+	if len(p.Title) > 0 {
+		sb.WriteString(fmt.Sprintf(`&title=%s`, url.QueryEscape(p.Title)))
+	}
+
+	if len(p.Company) > 0 {
+		sb.WriteString(fmt.Sprintf(`&company=%s`, url.QueryEscape(p.Company)))
+	}
+
+	if p.HasEmail {
+		sb.WriteString(`&has_email=true`)
+	}
+
+	if p.HasPhone {
+		sb.WriteString(`&has_phone=true`)
+	}
+
+	if len(p.Skills) > 0 {
+		sb.WriteString(fmt.Sprintf(`&skills=%s`, url.QueryEscape(strings.Join(p.Skills, ","))))
+	}
+
+	return sb.String()
+}
+
+// PeoplePreview is a preview of available data for each person returned by
+// the search API.
+type PeoplePreview struct {
+	UUID          string   `json:"uuid"`
+	FirstName     string   `json:"first_name,omitempty"`
+	LastName      string   `json:"last_name,omitempty"`
+	Title         string   `json:"title,omitempty"`
+	Company       string   `json:"company,omitempty"`
+	Location      string   `json:"location,omitempty"`
+	Country       string   `json:"country,omitempty"`
+	AvailableData []string `json:"available_data,omitempty"`
+}
+
+// PeopleResponse is the raw response returned by the API.
+type PeopleResponse struct {
+	Status string `json:"status"`
+
+	Meta struct {
+		Query struct {
+			Rows     int      `json:"rows"`
+			Start    int      `json:"start"`
+			Q        string   `json:"q"`
+			Location string   `json:"location"`
+			Company  string   `json:"company"`
+			Title    string   `json:"title"`
+			HasEmail bool     `json:"has_email"`
+			HasPhone bool     `json:"has_phone"`
+			Skills   []string `json:"skills"`
+		} `json:"query"`
+		Results struct {
+			Total int `json:"total"`
+		} `json:"results"`
+	} `json:"meta"`
+
+	Data []PeoplePreview `json:"data"`
+}
+
+// People will perform a search query for people and return a preview of the people.
+func People(q *PeopleQuery) (*PeopleResponse, error) {
+	req, err := request("GET", fmt.Sprintf("/people?1=1%s", q.Params()), nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	bs, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response PeopleResponse
+
+	if err := json.Unmarshal(bs, &response); err != nil {
+		return nil, err
+	}
+
+	if response.Status != "success" {
+		return nil, ErrInvalidRequest
+	}
+
+	return &response, nil
 }
 
 // Verify takes a professional email address and tries to verify its validity.
