@@ -69,6 +69,49 @@ if es, err := nymeria.Enrich(params...); err == nil {
 }
 ```
 
+#### Search People
+
+You can search for people with a set of criteria.
+
+```go
+nymeria.SetAuth("ny_your-api-key")
+
+resp, err := nymeria.People(&nymeria.PeopleQuery{
+  Skills:   []string{"Ruby on Rails"},
+  Location: "Palo Alto",
+  HasEmail: true,
+})
+
+if err != nil {
+  log.Fatal(err)
+}
+
+for _, preview := range resp.Data {
+  log.Println(preview.UUID)
+  log.Println(preview.FirstName)
+  log.Println(preview.LastName)
+  log.Println(preview.AvailableData)
+}
+```
+
+You can filter the preview results and if you want to reveal the contact
+details you can do so by sending the UUIDs.
+
+```go
+resp, err := nymeria.RevealPeople([]string{"032d3528-1eaf-4c04-83a2-65e11ee484a2"})
+
+if err != nil {
+  log.Fatal(err)
+}
+
+for _, person := range resp.Data {
+  log.Println(person.Bio)
+  log.Println(person.Emails)
+  log.Println(person.PhoneNumbers)
+  log.Println(person.Social)
+}
+```
+
 ## Command Line Tool
 
 The command line tool enables you to quickly test the Nymeria API.
@@ -78,7 +121,7 @@ The command line tool enables you to quickly test the Nymeria API.
 You can install the command line tool with `go install`.
 
 ```bash
-$ go install git.nymeria.io/nymeria.go/cmd/nymeria@v1.0.6
+$ go install git.nymeria.io/nymeria.go/cmd/nymeria@v1.0.7
 ```
 
 #### Set an API Key
