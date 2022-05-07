@@ -185,6 +185,22 @@ type PeopleResponse struct {
 	Data []PeoplePreview `json:"data"`
 }
 
+// RevealedPeople are people that has been revealed (contact and other data unlocked).
+type RevealedPeople struct {
+	Status string `json:"status"`
+
+	Meta struct {
+		UUIDS []string `json:"uuids"`
+	} `json:"meta"`
+
+	Usage struct {
+		Used  int `json:"used"`
+		Limit int `json:"limit"`
+	} `json:"usage"`
+
+	Data []Person `json:"data"`
+}
+
 // People will perform a search query for people and return a preview of the people.
 func People(q *PeopleQuery) (*PeopleResponse, error) {
 	req, err := request("GET", fmt.Sprintf("/people?1=1%s", q.Params()), nil)
@@ -208,6 +224,52 @@ func People(q *PeopleQuery) (*PeopleResponse, error) {
 	}
 
 	var response PeopleResponse
+
+	if err := json.Unmarshal(bs, &response); err != nil {
+		return nil, err
+	}
+
+	if response.Status != "success" {
+		return nil, ErrInvalidRequest
+	}
+
+	return &response, nil
+}
+
+// RevealPeople will reveal data for a person given their uuid. Each reveal
+// will consume one credit.
+func RevealPeople(uuids []string) (*RevealedPeople, error) {
+	type params struct {
+		UUIDs []string `json:"uuids"`
+	}
+
+	bs, err := json.Marshal(params{UUIDs: uuids})
+
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := request("POST", "/people", bytes.NewBuffer(bs))
+
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	bs, err = ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var response RevealedPeople
 
 	if err := json.Unmarshal(bs, &response); err != nil {
 		return nil, err
