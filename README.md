@@ -11,54 +11,74 @@ API](https://www.nymeria.io/developers) so you don't have to.
 
 ![Nymeria makes finding contact details a breeze.](https://www.nymeria.io/assets/images/marquee.png)
 
-## Go API
+## Examples
 
-#### Set and Check an API Key.
+#### Setting and Checking an API Key
 
 ```go
-nymeria.SetAuth("ny_your-api-key")
+import (
+	"git.nymeria.io/nymeria.go"
+)
+
+nymeria.SetAuth("YOUR API KEY GOES HERE")
 
 if err := nymeria.CheckAuthentication(); err == nil {
   log.Println("OK!")
 }
 ```
 
-All API endpoints assume an api key has been set. You should set the api key
-early in your program. The key will automatically be added to all future
-requests.
+All actions that interact with the Nymeria service assume an API key has been
+set and will fail if a key hasn't been set. A key only needs to be set once and
+can be set at the start of your program.
 
-#### Verify an Email Address
+If you want to check a key's validity you can use the CheckAuthentication
+function to verify the validity of a key that has been set. If no error is
+returned then the API key is valid.
+
+#### Verifying an Email Address
 
 ```go
-nymeria.SetAuth("ny_your-api-key")
+import (
+	"git.nymeria.io/nymeria.go"
+)
 
-if v, err := nymeria.Verify("someone@somewhere.com"); err == nil {
+nymeria.SetAuth("YOUR API KEY GOES HERE")
+
+if v, err := nymeria.Verify("dev@nymeria.io"); err == nil {
   log.Println(v.Data.Result)
 }
 ```
 
-#### Enrich Profiles
+You can verify the deliverability of an email address using Nymeria's service.
+The response will contain a `Result` and `Tags`.
 
-You can enrich one or more profiles using the Enrich method. The Enrich
-method takes one or more enrich params and returns one or more enrichment
-records.
+The `Result` will either be "valid" or "invalid". The `Tags` will give you additional
+details regarding the email address. For example, the tags will tell you if the mail
+server connection was successful, if the domain's DNS records are set up to send and
+receive email, etc.
+
+#### Enriching Profiles
 
 ```go
-nymeria.SetAuth("ny_your-api-key")
+import (
+	"git.nymeria.io/nymeria.go"
+)
+
+nymeria.SetAuth("YOUR API KEY GOES HERE")
 
 params := []nymeria.EnrichParams{
   {
-    URL: "github.com/nymeriaio",
+    URL: "github.com/nymeriaio", /* you can locate contact details using a supported URL */
   },
   {
-    Email: "steve@woz.org",
+    Email: "steve@woz.org",      /* you can perform an enrichment using an email address */
   },
 }
 
 if es, err := nymeria.Enrich(params...); err == nil {
   for _, enrichment := range es {
     if enrichment.Status == "success" {
-      log.Println(enrichment.Meta)               /* input params, etc */
+      log.Println(enrichment.Meta)
 
       log.Println(enrichment.Data.Bio)
       log.Println(enrichment.Data.Emails)
@@ -69,12 +89,35 @@ if es, err := nymeria.Enrich(params...); err == nil {
 }
 ```
 
-#### Search People
+You can enrich one or more profiles using the `Enrich` function. The Enrich
+function takes a variable number of `EnrichParams`. The most common parameters
+to use are `URL` and `Email`.
 
-You can search for people with a set of criteria.
+If you want to enrich an email address you can specify an `Email` and the
+Nymeria service will locate the person and return all associated data for them.
+Likewise, you can specify a supported url via the `URL` parameter if you prefer
+to enrich via a URL.
+
+At this time, Nymeria supports look ups for the following URLs:
+
+1. LinkedIn
+2. Facebook
+3. Twitter
+4. GitHub
+
+If using LinkedIn URLs, please provide a public LinkedIn URL.
+
+#### Searching for People
 
 ```go
-nymeria.SetAuth("ny_your-api-key")
+import (
+	"git.nymeria.io/nymeria.go"
+)
+
+nymeria.SetAuth("YOUR API KEY GOES HERE")
+
+// Search for Ruby on Rails skills in the Palo Alto area, and only people that
+// contain email addresses.
 
 resp, err := nymeria.People(&nymeria.PeopleQuery{
   Skills:   []string{"Ruby on Rails"},
@@ -86,19 +129,20 @@ if err != nil {
   log.Fatal(err)
 }
 
+uuids := []string{}
+
 for _, preview := range resp.Data {
+  uuids = append(uuids, preview.UUID) /* add to the slice of uuids to reveal */
+
   log.Println(preview.UUID)
   log.Println(preview.FirstName)
   log.Println(preview.LastName)
   log.Println(preview.AvailableData)
 }
-```
 
-You can filter the preview results and if you want to reveal the contact
-details you can do so by sending the UUIDs.
+// Reveal the complete details for all of the people we located.
 
-```go
-resp, err := nymeria.RevealPeople([]string{"032d3528-1eaf-4c04-83a2-65e11ee484a2"})
+resp, err := nymeria.RevealPeople(uuids)
 
 if err != nil {
   log.Fatal(err)
@@ -111,6 +155,34 @@ for _, person := range resp.Data {
   log.Println(person.Social)
 }
 ```
+
+You can perform searches using Nymeria's database of people. The search works
+using two functions:
+
+1. `People` which performs a search and returns a preview of each person.
+2. `RevealPeople` which takes UUIDs of people and returns complete profiles.
+
+Note, using `People` does not consume any credits but using `RevealPeople` will
+consume credit for each profile that is revealed.
+
+The `PeopleQuery` parameter enables you to specify your search criteria. In
+particular, you can specify:
+
+1. `Q` for general keyword matching text.
+2. `Location` to match a specific city or country.
+3. `Company` to match a current company.
+4. `Title` to match current titles.
+5. `HasEmail` if you only want to find people that have email addresses.
+6. `HasPhone` if you only want to find people that has phone numbers.
+7. `Skills` if you are looking to match specific skills.
+
+By default, 10 people will be returned for each page of search results. You can
+specify the `Page` as part of the `PeopleQuery` if you want to access
+additional pages of people.
+
+You can filter the search results and if you want to reveal the complete details
+you can do so by sending the UUIDs via `RevealPeople`. Please note, credit will
+be consumed for each person that is revealed.
 
 ## Command Line Tool
 
