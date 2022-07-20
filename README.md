@@ -95,17 +95,17 @@ to use are `URL` and `Email`.
 
 If you want to enrich an email address you can specify an `Email` and the
 Nymeria service will locate the person and return all associated data for them.
-Likewise, you can specify a supported url via the `URL` parameter if you prefer
+Likewise, you can specify a supported URL via the `URL` parameter if you prefer
 to enrich via a URL.
 
-At this time, Nymeria supports look ups for the following URLs:
+At this time, Nymeria supports look ups for the following sites:
 
 1. LinkedIn
 2. Facebook
 3. Twitter
 4. GitHub
 
-If using LinkedIn URLs, please provide a public LinkedIn URL.
+Please note, if using LinkedIn URLs provide the public profile LinkedIn URL.
 
 #### Searching for People
 
@@ -186,41 +186,115 @@ be consumed for each person that is revealed.
 
 ## Command Line Tool
 
-The command line tool enables you to quickly test the Nymeria API.
+The Nymeria command line tool makes interacting with the Nymeria service a
+breeze from the command line. You can do such things as verify email addresses,
+or enrich data with contain details directly from the comfort of your command line.
 
 #### Installation
 
 You can install the command line tool with `go install`.
 
 ```bash
-$ go install git.nymeria.io/nymeria.go/cmd/nymeria@v1.0.7
+$ go install git.nymeria.io/nymeria.go/cmd/nymeria@latest
 ```
 
-#### Set an API Key
+#### Setting Your API Key
 
 ```bash
-$ nymeria --auth ny_abc-123-456
+$ nymeria --auth yourapikeygoeshere
 ```
 
-The API key will be cached for future commands.
+The key will then be used for future commands.
 
-#### Purge all cached data.
+The API key will be stored locally in `$HOME/.cache/nymeria.io/auth.key` on Linux. On
+Windows and MacOS the key will be stored according to the operating system's
+user cache directory.
+
+#### Purging Cached Data
 
 ```bash
 $ nymeria --purge
 ```
 
-#### Verify an Email Address
+Purging will remove any cached data such as the authentication key from the
+command above.
+
+#### Verifying an Email Address
 
 ```bash
 $ nymeria --verify someone@somewhere.com
 ```
 
-#### Enrich Profiles
+```json
+{
+  "status": "success",
+    "meta": {
+      "email": "someone@somewhere.com"
+    },
+    "usage": {
+      "used": 2276,
+      "limit": 10000
+    },
+    "data": {
+      "result": "invalid",
+      "tags": [
+        "has_dns"
+      ]
+    }
+}
+```
+
+The JSON response will be printed to the terminal. You can pipe the results
+into a file or process via additional tools such as `jq`.
+
+#### Enriching Profiles
 
 ```bash
 $ nymeria --enrich '[{ "url": "github.com/nymeriaio" }, { "email": "steve@woz.org" }]'
 ```
+
+```json
+[
+  {
+    "status": "success",
+    "meta": {
+      "url": "github.com/nymeriaio",
+      "email": "",
+      "identifier": ""
+    },
+    "usage": {
+      "used": 2278,
+      "limit": 10000
+    },
+    "data": {
+      "bio": {},
+      "emails": [
+        {
+          "type": "professional",
+          "name": "support",
+          "domain": "nymeria.io",
+          "address": "support@nymeria.io"
+        }
+      ],
+      "phone_numbers": [
+        {
+          "number": "503-894-5199"
+        }
+      ],
+      "social": [
+        {
+          "type": "github",
+          "id": "nymeriaio",
+          "url": "https://github.com/nymeriaio"
+        }
+      ]
+    }
+  }
+]
+```
+
+The JSON response will be printed to the terminal. You can pipe the results
+into a file or process via additional tools such as `jq`.
 
 ## License
 
