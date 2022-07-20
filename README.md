@@ -107,6 +107,24 @@ At this time, Nymeria supports look ups for the following sites:
 
 Please note, if using LinkedIn URLs provide the public profile LinkedIn URL.
 
+Two other common parameters are `Filter` and `Require`. If you wish to filter
+out professional emails (only receive personal emails) you can do so by
+specifying `ProfessionalEmailFilter` as the Filter parameter.
+
+The `Require` parameter works by requiring certain kinds of data. For example,
+you can request an enrichment but only receive a result if the profile contains
+a phone number (or an email, personal email, professional email, etc). The
+following are all valid requirements:
+
+1. `email`
+2. `phone`
+3. `professional-email`
+4. `personal-email`
+
+You can specify multiple requirements by using a command between each
+requirement. For example you can require a phone and personal email with:
+`phone,personal-email` as the Require parameter.
+
 #### Searching for People
 
 ```go

@@ -13,7 +13,13 @@ import (
 var (
 	// ErrInvalidRequest is returned any time a request looks malformed or invalid.
 	// This can be due to a bad parameter, encoding, authentication, etc.
-	ErrInvalidRequest = errors.New(`error: the request looks invalid or malformed`)
+	ErrInvalidRequest = errors.New(`error: the request failed; perhaps you haven't authenticated or the request was malformed`)
+)
+
+const (
+	// ProfessionalEmailFilter is a valid EnrichParams Filter. If specified, no professional
+	// emails will be returned. As a result, only personal emails will be returned.
+	ProfessionalEmailFilter = "professional-emails"
 )
 
 // EnrichParams are the parameters used for the enrichment look up. One or more
@@ -22,6 +28,8 @@ type EnrichParams struct {
 	URL        string                 `json:"url"`
 	Email      string                 `json:"email"`
 	Identifier string                 `json:"identifier"`
+	Filter     string                 `json:"filter"`
+	Require    string                 `json:"require"`
 	Custom     map[string]interface{} `json:"custom,omitempty"`
 }
 
