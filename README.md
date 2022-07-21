@@ -121,7 +121,7 @@ following are all valid requirements:
 3. `professional-email`
 4. `personal-email`
 
-You can specify multiple requirements by using a command between each
+You can specify multiple requirements by using a comma between each
 requirement. For example you can require a phone and personal email with:
 `phone,personal-email` as the Require parameter.
 
