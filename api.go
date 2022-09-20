@@ -80,12 +80,10 @@ type Person struct {
 	} `json:"social,omitempty"`
 }
 
-//
 // Verification is the result of an email verify request. The "result" can either be
 // valid or invalid. The tags can include things like:
 //
-//		has_dns_mx, smtp_connectable, accepts_all, etc
-//
+//	has_dns_mx, smtp_connectable, accepts_all, etc
 type Verification struct {
 	Status string `json:"status"`
 
@@ -352,8 +350,6 @@ func Enrich(args ...EnrichParams) ([]Enrichment, error) {
 
 		return es, nil
 	}
-
-	return es, ErrInvalidRequest
 }
 
 // Performs a single enrichment.
