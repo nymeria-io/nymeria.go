@@ -17,7 +17,6 @@ type IdentifyParams struct {
 	Name      string
 	Location  string
 	Country   string
-	Size      int
 	Filter    string
 	Require   string
 }
@@ -28,7 +27,7 @@ func (i IdentifyParams) Invalid() bool {
 
 func (i IdentifyParams) URL() string {
 	return fmt.Sprintf(
-		"first_name=%s&last_name=%s&name=%s&location=%s&country=%s&filter=%s&require=%s&size=%s",
+		"first_name=%s&last_name=%s&name=%s&location=%s&country=%s&filter=%s&require=%s",
 		url.QueryEscape(i.FirstName),
 		url.QueryEscape(i.LastName),
 		url.QueryEscape(i.Name),
@@ -36,7 +35,6 @@ func (i IdentifyParams) URL() string {
 		url.QueryEscape(i.Country),
 		url.QueryEscape(i.Filter),
 		url.QueryEscape(i.Require),
-		url.QueryEscape(fmt.Sprintf("%d", i.Size)),
 	)
 }
 
