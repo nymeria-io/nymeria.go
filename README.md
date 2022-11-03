@@ -13,46 +13,39 @@ API](https://www.nymeria.io/developers) so you don't have to.
 
 ## Examples
 
-#### Setting and Checking an API Key
+#### Setting an API Key
 
 ```go
 import (
 	"git.nymeria.io/nymeria.go"
 )
 
-nymeria.SetAuth("YOUR API KEY GOES HERE")
-
-if err := nymeria.CheckAuthentication(); err == nil {
-  log.Println("OK!")
-}
+nymeria.ApiKey = "YOUR API KEY GOES HERE"
 ```
 
 All actions that interact with the Nymeria service assume an API key has been
 set and will fail if a key hasn't been set. A key only needs to be set once and
 can be set at the start of your program.
 
-If you want to check a key's validity you can use the CheckAuthentication
-function to verify the validity of a key that has been set. If no error is
-returned then the API key is valid.
-
 #### Verifying an Email Address
 
 ```go
 import (
 	"git.nymeria.io/nymeria.go"
+	"git.nymeria.io/nymeria.go/email"
 )
 
-nymeria.SetAuth("YOUR API KEY GOES HERE")
+nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-if v, err := nymeria.Verify("dev@nymeria.io"); err == nil {
-  log.Println(v.Data.Result)
+if v, err := email.Verify("dev@nymeria.io"); err == nil {
+  log.Println(v.Result)
 }
 ```
 
 You can verify the deliverability of an email address using Nymeria's service.
-The response will contain a `Result` and `Tags`.
+The response will contain a `Result` and `Flags`.
 
-The `Result` will either be "valid" or "invalid". The `Tags` will give you additional
+The `Result` will either be "valid" or "invalid". The `Flags` will give you additional
 details regarding the email address. For example, the tags will tell you if the mail
 server connection was successful, if the domain's DNS records are set up to send and
 receive email, etc.
@@ -62,40 +55,26 @@ receive email, etc.
 ```go
 import (
 	"git.nymeria.io/nymeria.go"
+	"git.nymeria.io/nymeria.go/person"
 )
 
-nymeria.SetAuth("YOUR API KEY GOES HERE")
+nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-params := []nymeria.EnrichParams{
+params := person.EnrichParams{
   {
-    URL: "github.com/nymeriaio", /* you can locate contact details using a supported URL */
-  },
-  {
-    Email: "steve@woz.org",      /* you can perform an enrichment using an email address */
+    Profile: "github.com/nymeriaio", /* you can locate contact details using a supported URL */
+    Email: "steve@woz.org",          /* you can perform an enrichment using an email address */
   },
 }
 
-if es, err := nymeria.Enrich(params...); err == nil {
-  for _, enrichment := range es {
-    if enrichment.Status == "success" {
-      log.Println(enrichment.Meta)
-
-      log.Println(enrichment.Data.Bio)
-      log.Println(enrichment.Data.Emails)
-      log.Println(enrichment.Data.PhoneNumbers)
-      log.Println(enrichment.Data.Social)
-    }
-  }
+if person, err := person.Enrich(params); err == nil {
+  log.Println(person.Emails, person.PhoneNumbers)
 }
 ```
 
-You can enrich one or more profiles using the `Enrich` function. The Enrich
-function takes a variable number of `EnrichParams`. The most common parameters
-to use are `URL` and `Email`.
-
 If you want to enrich an email address you can specify an `Email` and the
 Nymeria service will locate the person and return all associated data for them.
-Likewise, you can specify a supported URL via the `URL` parameter if you prefer
+Likewise, you can specify a supported URL via the `Profile` parameter if you prefer
 to enrich via a URL.
 
 At this time, Nymeria supports look ups for the following sites:
@@ -109,7 +88,7 @@ Please note, if using LinkedIn URLs provide the public profile LinkedIn URL.
 
 Two other common parameters are `Filter` and `Require`. If you wish to filter
 out professional emails (only receive personal emails) you can do so by
-specifying `ProfessionalEmailFilter` as the Filter parameter.
+specifying `professional-emails` as the Filter parameter.
 
 The `Require` parameter works by requiring certain kinds of data. For example,
 you can request an enrichment but only receive a result if the profile contains
@@ -130,189 +109,23 @@ requirement. For example you can require a phone and personal email with:
 ```go
 import (
 	"git.nymeria.io/nymeria.go"
+	"git.nymeria.io/nymeria.go/person"
 )
 
-nymeria.SetAuth("YOUR API KEY GOES HERE")
+nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-// Search for Ruby on Rails skills in the Palo Alto area, and only people that
-// contain email addresses.
-
-resp, err := nymeria.People(&nymeria.PeopleQuery{
-  Skills:   []string{"Ruby on Rails"},
-  Location: "Palo Alto",
-  HasEmail: true,
+people, err := person.Search(&nymeria.SearchQuery{
+  Query: `location_name:"New York" has_email:true`,
 })
 
 if err != nil {
   log.Fatal(err)
 }
-
-uuids := []string{}
-
-for _, preview := range resp.Data {
-  uuids = append(uuids, preview.UUID) /* add to the slice of uuids to reveal */
-
-  log.Println(preview.UUID)
-  log.Println(preview.FirstName)
-  log.Println(preview.LastName)
-  log.Println(preview.AvailableData)
-}
-
-// Reveal the complete details for all of the people we located.
-
-resp, err := nymeria.RevealPeople(uuids)
-
-if err != nil {
-  log.Fatal(err)
-}
-
-for _, person := range resp.Data {
-  log.Println(person.Bio)
-  log.Println(person.Emails)
-  log.Println(person.PhoneNumbers)
-  log.Println(person.Social)
-}
 ```
-
-You can perform searches using Nymeria's database of people. The search works
-using two functions:
-
-1. `People` which performs a search and returns a preview of each person.
-2. `RevealPeople` which takes UUIDs of people and returns complete profiles.
-
-Note, using `People` does not consume any credits but using `RevealPeople` will
-consume credit for each profile that is revealed.
-
-The `PeopleQuery` parameter enables you to specify your search criteria. In
-particular, you can specify:
-
-1. `Q` for general keyword matching text.
-2. `Location` to match a specific city or country.
-3. `Company` to match a current company.
-4. `Title` to match current titles.
-5. `HasEmail` if you only want to find people that have email addresses.
-6. `HasPhone` if you only want to find people that has phone numbers.
-7. `Skills` if you are looking to match specific skills.
 
 By default, 10 people will be returned for each page of search results. You can
-specify the `Page` as part of the `PeopleQuery` if you want to access
+specify the `Size` as part of the `SearchQuery` if you want to access
 additional pages of people.
-
-You can filter the search results and if you want to reveal the complete details
-you can do so by sending the UUIDs via `RevealPeople`. Please note, credit will
-be consumed for each person that is revealed.
-
-## Command Line Tool
-
-The Nymeria command line tool makes interacting with the Nymeria service a
-breeze from the command line. You can do such things as verify email addresses,
-or enrich data with contain details directly from the comfort of your command line.
-
-#### Installation
-
-You can install the command line tool with `go install`.
-
-```bash
-$ go install git.nymeria.io/nymeria.go/cmd/nymeria@latest
-```
-
-#### Setting Your API Key
-
-```bash
-$ nymeria --auth yourapikeygoeshere
-```
-
-The key will then be used for future commands.
-
-The API key will be stored locally in `$HOME/.cache/nymeria.io/auth.key` on Linux. On
-Windows and MacOS the key will be stored according to the operating system's
-user cache directory.
-
-#### Purging Cached Data
-
-```bash
-$ nymeria --purge
-```
-
-Purging will remove any cached data such as the authentication key from the
-command above.
-
-#### Verifying an Email Address
-
-```bash
-$ nymeria --verify someone@somewhere.com
-```
-
-```json
-{
-  "status": "success",
-    "meta": {
-      "email": "someone@somewhere.com"
-    },
-    "usage": {
-      "used": 2276,
-      "limit": 10000
-    },
-    "data": {
-      "result": "invalid",
-      "tags": [
-        "has_dns"
-      ]
-    }
-}
-```
-
-The JSON response will be printed to the terminal. You can pipe the results
-into a file or process via additional tools such as `jq`.
-
-#### Enriching Profiles
-
-```bash
-$ nymeria --enrich '[{ "url": "github.com/nymeriaio" }, { "email": "steve@woz.org" }]'
-```
-
-```json
-[
-  {
-    "status": "success",
-    "meta": {
-      "url": "github.com/nymeriaio",
-      "email": "",
-      "identifier": ""
-    },
-    "usage": {
-      "used": 2278,
-      "limit": 10000
-    },
-    "data": {
-      "bio": {},
-      "emails": [
-        {
-          "type": "professional",
-          "name": "support",
-          "domain": "nymeria.io",
-          "address": "support@nymeria.io"
-        }
-      ],
-      "phone_numbers": [
-        {
-          "number": "503-894-5199"
-        }
-      ],
-      "social": [
-        {
-          "type": "github",
-          "id": "nymeriaio",
-          "url": "https://github.com/nymeriaio"
-        }
-      ]
-    }
-  }
-]
-```
-
-The JSON response will be printed to the terminal. You can pipe the results
-into a file or process via additional tools such as `jq`.
 
 ## License
 
