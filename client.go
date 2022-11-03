@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	apiVersion = "3"
+	apiVersion = "4"
 	baseURL    = "https://www.nymeria.io/api/v" + apiVersion
 	userAgent  = "nymeria.go/" + apiVersion
 )
 
 var (
 	// Timeout is the default timeout used by the HTTP client (default: 5 seconds).
-	Timeout = 5 * time.Second
+	Timeout = 30 * time.Second
 
 	client = http.Client{
 		Timeout: Timeout,
