@@ -13,8 +13,8 @@ import (
 )
 
 type BulkEnrichParams struct {
-	Params   interface{} `json:"params"`
-	MetaData interface{} `json:"metadata"`
+	Params   EnrichParams `json:"params"`
+	MetaData interface{}  `json:"metadata"`
 }
 
 type EnrichParams struct {
