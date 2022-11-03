@@ -13,7 +13,8 @@ import (
 
 type SearchParams struct {
 	Query string
-	Size  int
+	Size  int /* how many records to retrieve starting at From (default: 0) */
+	From  int /* from which record to start */
 }
 
 func (s SearchParams) Invalid() bool {
@@ -22,9 +23,10 @@ func (s SearchParams) Invalid() bool {
 
 func (s SearchParams) URL() string {
 	return fmt.Sprintf(
-		"query=%s&size=%s",
+		"query=%s&size=%s&from=%s",
 		url.QueryEscape(s.Query),
 		url.QueryEscape(fmt.Sprintf("%d", s.Size)),
+		url.QueryEscape(fmt.Sprintf("%d", s.From)),
 	)
 }
 
