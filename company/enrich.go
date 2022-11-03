@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 
@@ -32,8 +31,6 @@ func (e EnrichParams) URL() string {
 }
 
 func Enrich(params EnrichParams) (*Company, error) {
-	log.Println("Enriching...")
-
 	if params.Invalid() {
 		return nil, nymeria.ErrInvalidParameters
 	}
