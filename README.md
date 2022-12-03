@@ -1,6 +1,6 @@
 # Nymeria
 
-[![Go Reference](https://pkg.go.dev/badge/git.nymeria.io/nymeria.go.svg)](https://pkg.go.dev/git.nymeria.io/nymeria.go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/nymeriaio/nymeria.go.svg)](https://pkg.go.dev/github.com/nymeriaio/nymeria.go)
 
 The official golang package and command line tool to interact with the Nymeria service
 and API.
@@ -17,7 +17,7 @@ API](https://www.nymeria.io/developers) so you don't have to.
 
 ```go
 import (
-	"git.nymeria.io/nymeria.go"
+	"github.com/nymeriaio/nymeria.go"
 )
 
 nymeria.ApiKey = "YOUR API KEY GOES HERE"
@@ -31,8 +31,8 @@ can be set at the start of your program.
 
 ```go
 import (
-	"git.nymeria.io/nymeria.go"
-	"git.nymeria.io/nymeria.go/email"
+	"github.com/nymeriaio/nymeria.go"
+	"github.com/nymeriaio/nymeria.go/email"
 )
 
 nymeria.ApiKey = "YOUR API KEY GOES HERE"
@@ -54,8 +54,8 @@ receive email, etc.
 
 ```go
 import (
-	"git.nymeria.io/nymeria.go"
-	"git.nymeria.io/nymeria.go/person"
+	"github.com/nymeriaio/nymeria.go"
+	"github.com/nymeriaio/nymeria.go/person"
 )
 
 nymeria.ApiKey = "YOUR API KEY GOES HERE"
@@ -108,8 +108,8 @@ requirement. For example you can require a phone and personal email with:
 
 ```go
 import (
-	"git.nymeria.io/nymeria.go"
-	"git.nymeria.io/nymeria.go/person"
+	"github.com/nymeriaio/nymeria.go"
+	"github.com/nymeriaio/nymeria.go/person"
 )
 
 nymeria.ApiKey = "YOUR API KEY GOES HERE"
