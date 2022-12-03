@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"git.nymeria.io/nymeria.go"
+	"github.com/nymeriaio/nymeria.go"
 )
 
 var (

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"git.nymeria.io/nymeria.go"
-	"git.nymeria.io/nymeria.go/internal/api"
+	"github.com/nymeriaio/nymeria.go"
+	"github.com/nymeriaio/nymeria.go/internal/api"
 )
 
 type EnrichParams struct {

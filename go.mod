@@ -1,3 +1,3 @@
-module git.nymeria.io/nymeria.go
+module github.com/nymeriaio/nymeria.go
 
 go 1.19
