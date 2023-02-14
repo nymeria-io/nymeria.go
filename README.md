@@ -16,11 +16,15 @@ API](https://www.nymeria.io/developers) so you don't have to.
 #### Setting an API Key
 
 ```go
+package main
+
 import (
 	"github.com/nymeriaio/nymeria.go"
 )
 
-nymeria.ApiKey = "YOUR API KEY GOES HERE"
+func main() {
+  nymeria.ApiKey = "YOUR API KEY GOES HERE"
+}
 ```
 
 All actions that interact with the Nymeria service assume an API key has been
@@ -30,15 +34,19 @@ can be set at the start of your program.
 #### Verifying an Email Address
 
 ```go
+package main
+
 import (
 	"github.com/nymeriaio/nymeria.go"
 	"github.com/nymeriaio/nymeria.go/email"
 )
 
-nymeria.ApiKey = "YOUR API KEY GOES HERE"
+func main() {
+  nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-if v, err := email.Verify("dev@nymeria.io"); err == nil {
-  log.Println(v.Result)
+  if v, err := email.Verify("dev@nymeria.io"); err == nil {
+    log.Println(v.Result)
+  }
 }
 ```
 
@@ -53,22 +61,24 @@ receive email, etc.
 #### Enriching Profiles
 
 ```go
+package main
+
 import (
 	"github.com/nymeriaio/nymeria.go"
 	"github.com/nymeriaio/nymeria.go/person"
 )
 
-nymeria.ApiKey = "YOUR API KEY GOES HERE"
+func main() {
+  nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-params := person.EnrichParams{
-  {
+  params := person.EnrichParams{
     Profile: "github.com/nymeriaio", /* you can locate contact details using a supported URL */
     Email: "steve@woz.org",          /* you can perform an enrichment using an email address */
-  },
-}
+  }
 
-if person, err := person.Enrich(params); err == nil {
-  log.Println(person.Emails, person.PhoneNumbers)
+  if person, err := person.Enrich(params); err == nil {
+    log.Println(person.Emails, person.PhoneNumbers)
+  }
 }
 ```
 
@@ -107,19 +117,23 @@ requirement. For example you can require a phone and personal email with:
 #### Searching for People
 
 ```go
+package main
+
 import (
 	"github.com/nymeriaio/nymeria.go"
 	"github.com/nymeriaio/nymeria.go/person"
 )
 
-nymeria.ApiKey = "YOUR API KEY GOES HERE"
+func main() {
+  nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-people, err := person.Search(&nymeria.SearchQuery{
-  Query: `location_name:"New York" has_email:true`,
-})
+  people, err := person.Search(&nymeria.SearchQuery{
+    Query: `location_name:"New York" has_email:true`,
+  })
 
-if err != nil {
-  log.Fatal(err)
+  if err != nil {
+    log.Fatal(err)
+  }
 }
 ```
 
