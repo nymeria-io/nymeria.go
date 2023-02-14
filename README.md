@@ -19,7 +19,7 @@ API](https://www.nymeria.io/developers) so you don't have to.
 package main
 
 import (
-	"github.com/nymeriaio/nymeria.go"
+  "github.com/nymeriaio/nymeria.go"
 )
 
 func main() {
@@ -37,8 +37,8 @@ can be set at the start of your program.
 package main
 
 import (
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/email"
+  "github.com/nymeriaio/nymeria.go"
+  "github.com/nymeriaio/nymeria.go/email"
 )
 
 func main() {
@@ -64,8 +64,8 @@ receive email, etc.
 package main
 
 import (
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/person"
+  "github.com/nymeriaio/nymeria.go"
+  "github.com/nymeriaio/nymeria.go/person"
 )
 
 func main() {
@@ -120,8 +120,8 @@ requirement. For example you can require a phone and personal email with:
 package main
 
 import (
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/person"
+  "github.com/nymeriaio/nymeria.go"
+  "github.com/nymeriaio/nymeria.go/person"
 )
 
 func main() {
