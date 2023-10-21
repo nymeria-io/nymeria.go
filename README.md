@@ -125,7 +125,7 @@ import (
 func main() {
   nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-  people, err := person.Search(&nymeria.SearchQuery{
+  people, err := person.Search(person.SearchParams{
     Query: `location_name:"New York" has_email:true`,
   })
 
@@ -136,7 +136,7 @@ func main() {
 ```
 
 By default, 10 people will be returned for each page of search results. You can
-specify the `Size` as part of the `SearchQuery` if you want to access
+specify the `Size` as part of the `SearchParams` if you want to access
 additional pages of people.
 
 ## License
