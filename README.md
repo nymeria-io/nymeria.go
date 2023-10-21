@@ -2,8 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/nymeriaio/nymeria.go.svg)](https://pkg.go.dev/github.com/nymeriaio/nymeria.go)
 
-The official golang package and command line tool to interact with the Nymeria service
-and API.
+The official golang package. Easily leverage the Nymeria API in seconds.
 
 Nymeria makes it easy to enrich data with contact information such as email
 addresses, phone numbers and social links. The golang package wraps Nymeria's [public
@@ -73,7 +72,6 @@ func main() {
 
   params := person.EnrichParams{
     Profile: "github.com/nymeriaio", /* you can locate contact details using a supported URL */
-    Email: "steve@woz.org",          /* you can perform an enrichment using an email address */
   }
 
   if person, err := person.Enrich(params); err == nil {
@@ -91,7 +89,7 @@ At this time, Nymeria supports look ups for the following sites:
 
 1. LinkedIn
 2. Facebook
-3. Twitter
+3. X (formerly, Twitter)
 4. GitHub
 
 Please note, if using LinkedIn URLs provide the public profile LinkedIn URL.
