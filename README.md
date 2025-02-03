@@ -1,6 +1,6 @@
 # Nymeria
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/nymeriaio/nymeria.go.svg)](https://pkg.go.dev/github.com/nymeriaio/nymeria.go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/nymeria-io/nymeria.go.svg)](https://pkg.go.dev/github.com/nymeria-io/nymeria.go)
 
 The official golang package. Easily leverage the Nymeria API in seconds.
 
@@ -18,7 +18,7 @@ API](https://www.nymeria.io/developers) so you don't have to.
 package main
 
 import (
-  "github.com/nymeriaio/nymeria.go"
+  "github.com/nymeria-io/nymeria.go"
 )
 
 func main() {
@@ -37,8 +37,8 @@ package main
 
 import (
     "log"
-    "github.com/nymeriaio/nymeria.go"
-    "github.com/nymeriaio/nymeria.go/email"
+    "github.com/nymeria-io/nymeria.go"
+    "github.com/nymeria-io/nymeria.go/email"
 )
 
 func main() {
@@ -65,8 +65,8 @@ package main
 
 import (
     "log"
-    "github.com/nymeriaio/nymeria.go"
-    "github.com/nymeriaio/nymeria.go/email"
+    "github.com/nymeria-io/nymeria.go"
+    "github.com/nymeria-io/nymeria.go/email"
 )
 
 func main() {
@@ -89,15 +89,15 @@ package main
 
 import (
     "log"
-    "github.com/nymeriaio/nymeria.go"
-    "github.com/nymeriaio/nymeria.go/person"
+    "github.com/nymeria-io/nymeria.go"
+    "github.com/nymeria-io/nymeria.go/person"
 )
 
 func main() {
   nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
   params := person.EnrichParams{
-    Profile: "github.com/nymeriaio", /* you can locate contact details using a supported URL */
+    Profile: "github.com/nymeria-io", /* you can locate contact details using a supported URL */
   }
 
   if person, err := person.Enrich(params); err == nil {
@@ -145,8 +145,8 @@ package main
 
 import (
     "log"
-    "github.com/nymeriaio/nymeria.go"
-    "github.com/nymeriaio/nymeria.go/person"
+    "github.com/nymeria-io/nymeria.go"
+    "github.com/nymeria-io/nymeria.go/person"
 )
 
 func main() {
@@ -175,8 +175,8 @@ package main
 
 import (
     "log"
-    "github.com/nymeriaio/nymeria.go"
-    "github.com/nymeriaio/nymeria.go/person"
+    "github.com/nymeria-io/nymeria.go"
+    "github.com/nymeria-io/nymeria.go/person"
 )
 
 func main() {
@@ -203,8 +203,8 @@ package main
 
 import (
     "log"
-    "github.com/nymeriaio/nymeria.go"
-    "github.com/nymeriaio/nymeria.go/person"
+    "github.com/nymeria-io/nymeria.go"
+    "github.com/nymeria-io/nymeria.go/person"
 )
 
 func main() {
@@ -234,8 +234,8 @@ package main
 import (
 	"log"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/company"
+	"github.com/nymeria-io/nymeria.go"
+	"github.com/nymeria-io/nymeria.go/company"
 )
 
 func main() {
@@ -255,8 +255,8 @@ package main
 import (
 	"log"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/company"
+	"github.com/nymeria-io/nymeria.go"
+	"github.com/nymeria-io/nymeria.go/company"
 )
 
 func main() {

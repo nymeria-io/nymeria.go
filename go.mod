@@ -1,3 +1,3 @@
-module github.com/nymeriaio/nymeria.go
+module github.com/nymeria-io/nymeria.go
 
 go 1.11
