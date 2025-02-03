@@ -226,6 +226,48 @@ By default, 10 people will be returned for each page of search results. You can
 specify the `Size` as part of the `SearchParams` if you want to access
 additional pages of people.
 
+#### Company Search
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/nymeriaio/nymeria.go"
+	"github.com/nymeriaio/nymeria.go/company"
+)
+
+func main() {
+	nymeria.ApiKey = "YOUR API KEY GOES HERE"
+
+	if company, err := company.Search(company.SearchParams{Name: "nymeria"}); err == nil {
+		log.Println(company)
+	}
+}
+```
+
+#### Company Enrichment
+
+```go
+package main
+
+import (
+	"log"
+
+	"github.com/nymeriaio/nymeria.go"
+	"github.com/nymeriaio/nymeria.go/company"
+)
+
+func main() {
+	nymeria.ApiKey = "YOUR API KEY GOES HERE"
+
+	if company, err := company.Enrich(company.EnrichParams{Website: "nymeria.io"}); err == nil {
+		log.Println(company)
+	}
+}
+```
+
 ## License
 
 MIT License
