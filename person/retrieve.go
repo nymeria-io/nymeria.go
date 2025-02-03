@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/nymeriaio/nymeria.go"
@@ -43,7 +43,7 @@ func Retrieve(id string) (*Person, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
@@ -80,6 +80,8 @@ func BulkRetrieve(params ...BulkRetrieveParams) ([]Person, error) {
 		return nil, err
 	}
 
+	req.Header.Add("Content-Type", "application/json")
+
 	resp, err := api.Client.Do(req)
 
 	if err != nil {
@@ -96,16 +98,19 @@ func BulkRetrieve(params ...BulkRetrieveParams) ([]Person, error) {
 
 	defer resp.Body.Close()
 
-	bs, err = ioutil.ReadAll(resp.Body)
+	bs, err = io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var response []struct {
-		Status   int                    `json:"status"`
-		MetaData map[string]interface{} `json:"metadata"`
-		Data     Person                 `json:"data"`
+	var response struct {
+		Status int `json:"status"`
+		Data   []struct {
+			Status   int                    `json:"status"`
+			MetaData map[string]interface{} `json:"metadata"`
+			Data     Person                 `json:"data"`
+		} `json:"data"`
 	}
 
 	if err := json.Unmarshal(bs, &response); err != nil {
@@ -114,8 +119,10 @@ func BulkRetrieve(params ...BulkRetrieveParams) ([]Person, error) {
 
 	var records []Person
 
-	for _, v := range response {
-		records = append(records, v.Data)
+	for _, v := range response.Data {
+		if v.Status == 200 {
+			records = append(records, v.Data)
+		}
 	}
 
 	return records, nil
