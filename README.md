@@ -36,8 +36,9 @@ can be set at the start of your program.
 package main
 
 import (
-  "github.com/nymeriaio/nymeria.go"
-  "github.com/nymeriaio/nymeria.go/email"
+    "log"
+    "github.com/nymeriaio/nymeria.go"
+    "github.com/nymeriaio/nymeria.go/email"
 )
 
 func main() {
@@ -57,14 +58,39 @@ details regarding the email address. For example, the tags will tell you if the 
 server connection was successful, if the domain's DNS records are set up to send and
 receive email, etc.
 
+You can also perform verifications in bulk:
+
+```go
+package main
+
+import (
+    "log"
+    "github.com/nymeriaio/nymeria.go"
+    "github.com/nymeriaio/nymeria.go/email"
+)
+
+func main() {
+    nymeria.ApiKey = "YOUR API KEY GOES HERE"
+
+    rs := []email.BulkVerifyParams{
+        {Email: "someone@somewhere.com"},
+    }
+
+    if record, err := email.BulkVerify(rs...); err == nil {
+        log.Println(record)
+    }
+}
+```
+
 #### Enriching Profiles
 
 ```go
 package main
 
 import (
-  "github.com/nymeriaio/nymeria.go"
-  "github.com/nymeriaio/nymeria.go/person"
+    "log"
+    "github.com/nymeriaio/nymeria.go"
+    "github.com/nymeriaio/nymeria.go/person"
 )
 
 func main() {
@@ -112,26 +138,87 @@ You can specify multiple requirements by using a comma between each
 requirement. For example you can require a phone and personal email with:
 `phone,personal-email` as the Require parameter.
 
+You can perform enrichments in bulk as well:
+
+```go
+package main
+
+import (
+    "log"
+    "github.com/nymeriaio/nymeria.go"
+    "github.com/nymeriaio/nymeria.go/person"
+)
+
+func main() {
+    nymeria.ApiKey = "YOUR API KEY GOES HERE"
+
+    requests := []person.BulkEnrichParams{
+        {Params: person.EnrichParams{Profile: "linkedin.com/in/someone"}},
+        {Params: person.EnrichParams{Email: "someone@hsomewhere.com"}},
+    }
+
+    if people, err := person.BulkEnrich(requests...); err == nil {
+        for _, person := range people {
+            log.Println(person)
+        }
+    }
+}
+```
+
+#### Retrieve People
+
+If you already have a person's Nymeria ID you can fetch them and check for 
+updated data. You can do this as a one off request or in bulk:
+
+```go
+package main
+
+import (
+    "log"
+    "github.com/nymeriaio/nymeria.go"
+    "github.com/nymeriaio/nymeria.go/person"
+)
+
+func main() {
+    nymeria.ApiKey = "YOUR API KEY GOES HERE"
+
+	if person, err := person.Retrieve("cb0120e2-d8bc-4076-9408-45d9b3614aed"); err == nil {
+		log.Println(person)
+	}
+
+	requests := []person.BulkRetrieveParams{
+		{ID: "cb0120e2-d8bc-4076-9408-45d9b3614aed"},
+	}
+
+	if people, err := person.BulkRetrieve(requests...); err == nil {
+		log.Println(people)
+	}
+}
+```
+
 #### Searching for People
 
 ```go
 package main
 
 import (
-  "github.com/nymeriaio/nymeria.go"
-  "github.com/nymeriaio/nymeria.go/person"
+    "log"
+    "github.com/nymeriaio/nymeria.go"
+    "github.com/nymeriaio/nymeria.go/person"
 )
 
 func main() {
-  nymeria.ApiKey = "YOUR API KEY GOES HERE"
+    nymeria.ApiKey = "YOUR API KEY GOES HERE"
 
-  people, err := person.Search(person.SearchParams{
-    Query: `location_name:"New York" has_email:true`,
-  })
+    query := person.SearchParams{
+        Title: "software developer", 
+        Location: "palo alto, california", 
+        Limit: 3,
+    }
 
-  if err != nil {
-    log.Fatal(err)
-  }
+    if people, err := person.Search(query); err == nil {
+        log.Println(people)
+    }
 }
 ```
 
