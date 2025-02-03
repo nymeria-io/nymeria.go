@@ -8,8 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/internal/api"
+	"github.com/nymeria-io/nymeria.go"
 )
 
 type EnrichParams struct {
@@ -52,13 +51,13 @@ func Enrich(params EnrichParams) (*Company, error) {
 		return nil, nymeria.ErrInvalidParameters
 	}
 
-	req, err := api.Request("GET", fmt.Sprintf("/company/enrich?%s", params.URL()), nil)
+	req, err := nymeria.Request("GET", fmt.Sprintf("/company/enrich?%s", params.URL()), nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err

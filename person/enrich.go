@@ -9,8 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/internal/api"
+	"github.com/nymeria-io/nymeria.go"
 )
 
 type BulkEnrichParams struct {
@@ -68,13 +67,13 @@ func Enrich(params EnrichParams) (*Person, error) {
 		return nil, nymeria.ErrInvalidParameters
 	}
 
-	req, err := api.Request("GET", fmt.Sprintf("/person/enrich?%s", params.URL()), nil)
+	req, err := nymeria.Request("GET", fmt.Sprintf("/person/enrich?%s", params.URL()), nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -121,7 +120,7 @@ func BulkEnrich(params ...BulkEnrichParams) ([]Person, error) {
 		return nil, err
 	}
 
-	req, err := api.Request("POST", "/person/enrich/bulk", bytes.NewBuffer(bs))
+	req, err := nymeria.Request("POST", "/person/enrich/bulk", bytes.NewBuffer(bs))
 
 	if err != nil {
 		return nil, err
@@ -129,7 +128,7 @@ func BulkEnrich(params ...BulkEnrichParams) ([]Person, error) {
 
 	req.Header.Add("Content-Type", "application/json")
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err

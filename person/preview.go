@@ -3,12 +3,12 @@ package person
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/internal/api"
+	"github.com/nymeria-io/nymeria.go"
 )
 
 type PersonPreview struct {
@@ -77,14 +77,36 @@ func (e PreviewParams) Invalid() bool {
 }
 
 func (e PreviewParams) URL() string {
-	return fmt.Sprintf(
-		"profile=%s&email=%s&lid=%s&filter=%s&require=%s",
-		url.QueryEscape(e.Profile),
-		url.QueryEscape(e.Email),
-		url.QueryEscape(e.LID),
-		url.QueryEscape(e.Filter),
-		url.QueryEscape(e.Require),
-	)
+	var query strings.Builder
+
+	prefix := ""
+
+	if len(e.Profile) > 0 {
+		query.WriteString(fmt.Sprintf("profile=%s", url.QueryEscape(e.Profile)))
+		prefix = "&"
+	}
+
+	if len(e.Email) > 0 {
+		query.WriteString(fmt.Sprintf("%semail=%s", prefix, url.QueryEscape(e.Email)))
+		prefix = "&"
+	}
+
+	if len(e.LID) > 0 {
+		query.WriteString(fmt.Sprintf("%slid=%s", prefix, url.QueryEscape(e.LID)))
+		prefix = "&"
+	}
+
+	if len(e.Filter) > 0 {
+		query.WriteString(fmt.Sprintf("%sfilter=%s", prefix, url.QueryEscape(e.Filter)))
+		prefix = "&"
+	}
+
+	if len(e.Require) > 0 {
+		query.WriteString(fmt.Sprintf("%srequire=%s", prefix, url.QueryEscape(e.Require)))
+		prefix = "&"
+	}
+
+	return query.String()
 }
 
 func Preview(params PreviewParams) (*PersonPreview, error) {
@@ -92,13 +114,13 @@ func Preview(params PreviewParams) (*PersonPreview, error) {
 		return nil, nymeria.ErrInvalidParameters
 	}
 
-	req, err := api.Request("GET", fmt.Sprintf("/person/enrich/preview?%s", params.URL()), nil)
+	req, err := nymeria.Request("GET", fmt.Sprintf("/person/enrich/preview?%s", params.URL()), nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -114,7 +136,7 @@ func Preview(params PreviewParams) (*PersonPreview, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err

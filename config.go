@@ -2,7 +2,9 @@ package nymeria
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -32,3 +34,28 @@ var (
 		http.StatusPaymentRequired: ErrPaymentRequired,
 	}
 )
+
+var (
+	Client = http.Client{
+		Timeout: Timeout,
+	}
+)
+
+func Request(method, endpoint string, data io.Reader) (*http.Request, error) {
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", BaseURL, endpoint), data)
+
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header = http.Header{
+		"X-Api-Key":  []string{ApiKey},
+		"User-Agent": []string{UserAgent},
+	}
+
+	return req, nil
+}
+
+func Normalize(s string) string {
+	return strings.TrimSpace(strings.ToLower(s))
+}

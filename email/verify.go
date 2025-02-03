@@ -8,8 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/internal/api"
+	"github.com/nymeria-io/nymeria.go"
 )
 
 type BulkVerifyParams struct {
@@ -18,19 +17,19 @@ type BulkVerifyParams struct {
 }
 
 func Verify(email string) (*Verification, error) {
-	email = api.Normalize(email)
+	email = nymeria.Normalize(email)
 
 	if len(email) == 0 {
 		return nil, nymeria.ErrInvalidParameters
 	}
 
-	req, err := api.Request("GET", fmt.Sprintf("/email/verify?email=%s", url.QueryEscape(email)), nil)
+	req, err := nymeria.Request("GET", fmt.Sprintf("/email/verify?email=%s", url.QueryEscape(email)), nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -66,7 +65,7 @@ func Verify(email string) (*Verification, error) {
 
 func BulkVerify(params ...BulkVerifyParams) ([]Verification, error) {
 	for i := range params {
-		params[i].Email = api.Normalize(params[i].Email)
+		params[i].Email = nymeria.Normalize(params[i].Email)
 	}
 
 	if len(params) == 0 {
@@ -92,7 +91,7 @@ func BulkVerify(params ...BulkVerifyParams) ([]Verification, error) {
 		return nil, err
 	}
 
-	req, err := api.Request("POST", "/email/verify/bulk", bytes.NewBuffer(bs))
+	req, err := nymeria.Request("POST", "/email/verify/bulk", bytes.NewBuffer(bs))
 
 	if err != nil {
 		return nil, err
@@ -100,7 +99,7 @@ func BulkVerify(params ...BulkVerifyParams) ([]Verification, error) {
 
 	req.Header.Add("Content-Type", "application/json")
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err

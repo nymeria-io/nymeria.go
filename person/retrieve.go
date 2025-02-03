@@ -7,8 +7,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/nymeriaio/nymeria.go"
-	"github.com/nymeriaio/nymeria.go/internal/api"
+	"github.com/nymeria-io/nymeria.go"
 )
 
 type BulkRetrieveParams struct {
@@ -21,13 +20,13 @@ func Retrieve(id string) (*Person, error) {
 		return nil, nymeria.ErrInvalidParameters
 	}
 
-	req, err := api.Request("GET", fmt.Sprintf("/person/retrieve/%s", id), nil)
+	req, err := nymeria.Request("GET", fmt.Sprintf("/person/retrieve/%s", id), nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -74,7 +73,7 @@ func BulkRetrieve(params ...BulkRetrieveParams) ([]Person, error) {
 		return nil, err
 	}
 
-	req, err := api.Request("POST", "/person/retrieve/bulk", bytes.NewBuffer(bs))
+	req, err := nymeria.Request("POST", "/person/retrieve/bulk", bytes.NewBuffer(bs))
 
 	if err != nil {
 		return nil, err
@@ -82,7 +81,7 @@ func BulkRetrieve(params ...BulkRetrieveParams) ([]Person, error) {
 
 	req.Header.Add("Content-Type", "application/json")
 
-	resp, err := api.Client.Do(req)
+	resp, err := nymeria.Client.Do(req)
 
 	if err != nil {
 		return nil, err
