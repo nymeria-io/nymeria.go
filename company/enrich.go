@@ -3,31 +3,48 @@ package company
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/nymeriaio/nymeria.go"
 	"github.com/nymeriaio/nymeria.go/internal/api"
 )
 
 type EnrichParams struct {
-	Website string
-	Profile string
-	Name    string
+	Website    string
+	Profile    string
+	Name       string
+	LinkedinID int
 }
 
 func (e EnrichParams) Invalid() bool {
-	return len(e.Website) == 0 && len(e.Profile) == 0 && len(e.Name) == 0
+	return len(e.Website) == 0 && len(e.Profile) == 0 && len(e.Name) == 0 && e.LinkedinID == 0
 }
 
 func (e EnrichParams) URL() string {
-	return fmt.Sprintf(
-		"website=%s&profile=%s&name=%s",
-		url.QueryEscape(e.Website),
-		url.QueryEscape(e.Profile),
-		url.QueryEscape(e.Name),
-	)
+	var query strings.Builder
+
+	query.WriteString("1=1")
+
+	if len(e.Website) > 0 {
+		query.WriteString(fmt.Sprintf("&website=%s", url.QueryEscape(e.Website)))
+	}
+
+	if len(e.Name) > 0 {
+		query.WriteString(fmt.Sprintf("&name=%s", url.QueryEscape(e.Name)))
+	}
+
+	if len(e.Profile) > 0 {
+		query.WriteString(fmt.Sprintf("&profile=%s", url.QueryEscape(e.Profile)))
+	}
+
+	if e.LinkedinID > 0 {
+		query.WriteString(fmt.Sprintf("&linkedin_id=%d", e.LinkedinID))
+	}
+
+	return query.String()
 }
 
 func Enrich(params EnrichParams) (*Company, error) {
@@ -57,7 +74,7 @@ func Enrich(params EnrichParams) (*Company, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
