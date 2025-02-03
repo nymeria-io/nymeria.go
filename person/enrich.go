@@ -19,11 +19,11 @@ type BulkEnrichParams struct {
 }
 
 type EnrichParams struct {
-	Profile string
-	Email   string
-	LID     string
-	Filter  string
-	Require string
+	Profile string `json:"profile,omitempty"`
+	Email   string `json:"email,omitempty"`
+	LID     string `json:"lid,omitempty"`
+	Filter  string `json:"filter,omitempty"`
+	Require string `json:"require,omitempty"`
 }
 
 func (e EnrichParams) Invalid() bool {
@@ -123,6 +123,8 @@ func BulkEnrich(params ...BulkEnrichParams) ([]Person, error) {
 
 	req, err := api.Request("POST", "/person/enrich/bulk", bytes.NewBuffer(bs))
 
+	req.Header.Add("Content-Type", "application/json")
+
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +163,9 @@ func BulkEnrich(params ...BulkEnrichParams) ([]Person, error) {
 	var records []Person
 
 	for _, v := range response {
-		records = append(records, v.Data)
+		if v.Status == 200 {
+			records = append(records, v.Data)
+		}
 	}
 
 	return records, nil

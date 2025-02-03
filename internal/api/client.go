@@ -22,9 +22,8 @@ func Request(method, endpoint string, data io.Reader) (*http.Request, error) {
 	}
 
 	req.Header = http.Header{
-		"X-Api-Key":    []string{nymeria.ApiKey},
-		"Content-Type": []string{"application/json"},
-		"User-Agent":   []string{nymeria.UserAgent},
+		"X-Api-Key":  []string{nymeria.ApiKey},
+		"User-Agent": []string{nymeria.UserAgent},
 	}
 
 	return req, nil
