@@ -1,0 +1,6 @@
+# test files
+cmd/
+
+# editor files
+*~
+*.swp
