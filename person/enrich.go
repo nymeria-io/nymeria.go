@@ -123,11 +123,11 @@ func BulkEnrich(params ...BulkEnrichParams) ([]Person, error) {
 
 	req, err := api.Request("POST", "/person/enrich/bulk", bytes.NewBuffer(bs))
 
-	req.Header.Add("Content-Type", "application/json")
-
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", "application/json")
 
 	resp, err := api.Client.Do(req)
 

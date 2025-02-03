@@ -98,6 +98,8 @@ func BulkVerify(params ...BulkVerifyParams) ([]Verification, error) {
 		return nil, err
 	}
 
+	req.Header.Add("Content-Type", "application/json")
+
 	resp, err := api.Client.Do(req)
 
 	if err != nil {
