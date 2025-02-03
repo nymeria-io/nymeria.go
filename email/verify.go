@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -46,7 +46,7 @@ func Verify(email string) (*Verification, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
@@ -114,7 +114,7 @@ func BulkVerify(params ...BulkVerifyParams) ([]Verification, error) {
 
 	defer resp.Body.Close()
 
-	bs, err = ioutil.ReadAll(resp.Body)
+	bs, err = io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
