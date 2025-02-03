@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/nymeriaio/nymeria.go"
 	"github.com/nymeriaio/nymeria.go/internal/api"
@@ -30,14 +31,36 @@ func (e EnrichParams) Invalid() bool {
 }
 
 func (e EnrichParams) URL() string {
-	return fmt.Sprintf(
-		"profile=%s&email=%s&lid=%s&filter=%s&require=%s",
-		url.QueryEscape(e.Profile),
-		url.QueryEscape(e.Email),
-		url.QueryEscape(e.LID),
-		url.QueryEscape(e.Filter),
-		url.QueryEscape(e.Require),
-	)
+	var query strings.Builder
+
+	prefix := ""
+
+	if len(e.Profile) > 0 {
+		query.WriteString(fmt.Sprintf("profile=%s", url.QueryEscape(e.Profile)))
+		prefix = "&"
+	}
+
+	if len(e.Email) > 0 {
+		query.WriteString(fmt.Sprintf("%semail=%s", prefix, url.QueryEscape(e.Email)))
+		prefix = "&"
+	}
+
+	if len(e.LID) > 0 {
+		query.WriteString(fmt.Sprintf("%slid=%s", prefix, url.QueryEscape(e.LID)))
+		prefix = "&"
+	}
+
+	if len(e.Filter) > 0 {
+		query.WriteString(fmt.Sprintf("%sfilter=%s", prefix, url.QueryEscape(e.Filter)))
+		prefix = "&"
+	}
+
+	if len(e.Require) > 0 {
+		query.WriteString(fmt.Sprintf("%srequire=%s", prefix, url.QueryEscape(e.Require)))
+		prefix = "&"
+	}
+
+	return query.String()
 }
 
 func Enrich(params EnrichParams) (*Person, error) {
@@ -67,7 +90,7 @@ func Enrich(params EnrichParams) (*Person, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
@@ -120,7 +143,7 @@ func BulkEnrich(params ...BulkEnrichParams) ([]Person, error) {
 
 	defer resp.Body.Close()
 
-	bs, err = ioutil.ReadAll(resp.Body)
+	bs, err = io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
