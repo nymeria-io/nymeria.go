@@ -3,7 +3,7 @@ package person
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -23,7 +23,7 @@ func (s SearchParams) Invalid() bool {
 
 func (s SearchParams) URL() string {
 	return fmt.Sprintf(
-		"query=%s&size=%s&form=%s",
+		"query=%s&size=%s&from=%s",
 		url.QueryEscape(s.Query),
 		url.QueryEscape(fmt.Sprintf("%d", s.Size)),
 		url.QueryEscape(fmt.Sprintf("%d", s.From)),
@@ -57,7 +57,7 @@ func Search(params SearchParams) ([]Person, error) {
 
 	defer resp.Body.Close()
 
-	bs, err := ioutil.ReadAll(resp.Body)
+	bs, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		return nil, err
